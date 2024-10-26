@@ -1,3 +1,7 @@
+/*
+FactionsCommand.java permet de gérer le /f
+ */
+
 package fr.kirosnn.wiloriaFactions.cmd;
 
 import fr.kirosnn.wiloriaFactions.WiloriaFactions;
@@ -16,6 +20,7 @@ public class FactionsCommand implements CommandExecutor {
     private final ClaimCommand claimCommand;
     private final UnclaimCommand unclaimCommand;
     private final UnclaimAllCommand unclaimAllCommand;
+    private final MapCommand mapCommand;
 
     public FactionsCommand(WiloriaFactions plugin) {
         this.createFactionCommand = new CreateFactionCommand(plugin.getFactions());
@@ -25,6 +30,7 @@ public class FactionsCommand implements CommandExecutor {
         this.claimCommand = new ClaimCommand(plugin);
         this.unclaimCommand = new UnclaimCommand(plugin);
         this.unclaimAllCommand = new UnclaimAllCommand(plugin);
+        this.mapCommand = new MapCommand(plugin.getFactions());
     }
 
     @Override
@@ -60,6 +66,9 @@ public class FactionsCommand implements CommandExecutor {
                 break;
             case "unclaimall":
                 unclaimAllCommand.execute(player);
+                break;
+            case "map":
+                mapCommand.execute(player);
                 break;
             default:
                 player.sendMessage("§cCommande inconnue. Tapez /f pour voir les commandes disponibles.");

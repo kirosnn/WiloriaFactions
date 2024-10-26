@@ -1,3 +1,7 @@
+/*
+ClaimManager.java permet de gérer les claims.
+ */
+
 package fr.kirosnn.wiloriaFactions.claims;
 
 import fr.kirosnn.wiloriaFactions.WiloriaFactions;
@@ -38,7 +42,6 @@ public class ClaimManager {
         faction.addClaim(loc);
         plugin.getFactions().forceSave();
 
-        // Si c'est le premier claim
         if (faction.getFirstClaim() == null) {
             faction.setFirstClaim(loc);
         }

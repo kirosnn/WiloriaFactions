@@ -1,3 +1,7 @@
+/*
+CreateFactionCommand.java
+ */
+
 package fr.kirosnn.wiloriaFactions.cmd.subcommands;
 
 import fr.kirosnn.wiloriaFactions.data.Factions;

@@ -1,3 +1,7 @@
+/*
+HelpCommand.java
+ */
+
 package fr.kirosnn.wiloriaFactions.cmd.subcommands;
 
 import org.bukkit.entity.Player;
@@ -19,8 +23,6 @@ public class HelpCommand {
         helpPages.add("§6/f core : Obtenez le Coeur de Faction (leader uniquement)");
 
         helpPages.add("§6=== Commandes de Faction - Page 2 ===");
-        helpPages.add("§6/f ally <nom> : Forme une alliance avec une autre faction");
-        helpPages.add("§6/f enemy <nom> : Déclare une faction ennemie");
         helpPages.add("§6/f list : Affiche la liste des factions");
     }
 

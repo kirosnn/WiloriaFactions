@@ -1,3 +1,7 @@
+/*
+ClaimEnterListener.java gère les titles entre claims
+ */
+
 package fr.kirosnn.wiloriaFactions.listeners;
 
 import fr.kirosnn.wiloriaFactions.WiloriaFactions;
@@ -24,36 +28,33 @@ public class ClaimEnterListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
-        // Vérifie si le joueur a changé de chunk
         FLocation fromLocation = new FLocation(event.getFrom());
         FLocation toLocation = new FLocation(event.getTo());
 
         if (fromLocation.equals(toLocation)) {
-            return; // Ne rien faire si le joueur reste dans le même claim
+            return;
         }
 
-        // Récupère les factions associées aux claims d'origine et de destination
         Faction fromFaction = factions.getFactionByLocation(fromLocation);
         Faction toFaction = factions.getFactionByLocation(toLocation);
 
-        // Ne rien faire si la faction est la même que celle du claim précédent
         if (toFaction == fromFaction) {
             return;
         }
 
-        // Affichage du titre et du sous-titre
         displayFactionTitle(player, toFaction);
     }
 
     private void displayFactionTitle(Player player, Faction faction) {
         if (faction == null) {
-            return; // Ne rien afficher si le claim n'appartient à aucune faction
+            String title = ChatColor.DARK_GREEN + "Terre non conquise";
+            String subtitle = ChatColor.GRAY + "Cette zone n'appartient à personne";
+            player.sendTitle(title, subtitle, 10, 70, 20);
+        } else {
+            String titleColor = faction.getMembers().contains(player.getUniqueId()) ? ChatColor.GREEN.toString() : ChatColor.RED.toString();
+            String title = titleColor + faction.getName();
+            String subtitle = ChatColor.GRAY + faction.getDescription();
+            player.sendTitle(title, subtitle, 10, 70, 20);
         }
-
-        String titleColor = faction.getMembers().contains(player.getUniqueId()) ? ChatColor.GREEN.toString() : ChatColor.RED.toString();
-        String title = titleColor + faction.getName();
-        String subtitle = ChatColor.GRAY + faction.getDescription();
-
-        player.sendTitle(title, subtitle, 10, 70, 20); // Durée : fadeIn 10 ticks, stay 70 ticks, fadeOut 20 ticks
     }
 }

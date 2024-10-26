@@ -1,3 +1,9 @@
+/*
+Items.java permet de créer le Coeur de Faction dans le plugin depuis ItemsAdder.
+ */
+
+
+
 package fr.kirosnn.wiloriaFactions.cdf;
 
 import dev.lone.itemsadder.api.CustomStack;

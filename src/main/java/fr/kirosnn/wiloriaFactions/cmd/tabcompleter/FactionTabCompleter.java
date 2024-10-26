@@ -1,3 +1,7 @@
+/*
+FactionTabCompleter.java gère le tab-completion des commandes.
+ */
+
 package fr.kirosnn.wiloriaFactions.cmd.tabcompleter;
 
 import fr.kirosnn.wiloriaFactions.WiloriaFactions;
@@ -30,7 +34,6 @@ public class FactionTabCompleter implements TabCompleter {
             "map",
             "leave",
             "help"
-            // Ajoutez vos autres commandes ici
     );
 
     @Override
@@ -45,7 +48,6 @@ public class FactionTabCompleter implements TabCompleter {
             return getBaseCommands(args[0]);
         }
 
-        // Gestion des sous-arguments selon la commande
         return switch (args[0].toLowerCase()) {
             case "invite" -> getInvitablePlayers(player, args[1]);
             case "kick", "promote", "demote" -> getFactionMembers(player, args[1]);
@@ -86,7 +88,7 @@ public class FactionTabCompleter implements TabCompleter {
 
         return faction.getMembers().stream()
                 .map(uuid -> Bukkit.getPlayer(uuid))
-                .filter(p -> p != null && p != player) // Exclure le joueur lui-même
+                .filter(p -> p != null && p != player)
                 .map(Player::getName)
                 .filter(name -> name.toLowerCase().startsWith(start.toLowerCase()))
                 .collect(Collectors.toList());

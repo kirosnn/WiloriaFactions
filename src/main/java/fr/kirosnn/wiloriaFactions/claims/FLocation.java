@@ -1,3 +1,7 @@
+/*
+FLocation.java permet de gérer la position des claims via l'API Bukkit.
+ */
+
 package fr.kirosnn.wiloriaFactions.claims;
 
 import org.bukkit.Chunk;

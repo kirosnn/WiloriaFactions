@@ -1,3 +1,7 @@
+/*
+ItemsListener.java est l'écouteur d'évenement lié au CDF.
+ */
+
 package fr.kirosnn.wiloriaFactions.cdf;
 
 import dev.lone.itemsadder.api.CustomStack;
@@ -43,14 +47,12 @@ public class ItemsListener implements Listener {
                 }
             }
 
-            // Envoi d'un message global
             Faction faction = factionsManager.getFactionByPlayer(player.getUniqueId());
             if (faction != null) {
                 String factionName = faction.getName();
                 String broadcastMessage = ChatColor.RED + player.getName() + " de la faction " + factionName + " a placé le Coeur de Faction !";
                 Bukkit.broadcastMessage(broadcastMessage);
 
-                // Message de félicitations au joueur
                 player.sendMessage(ChatColor.GREEN + "Félicitations ! Vous avez placé le Coeur de Faction pour votre faction.");
             }
         }
