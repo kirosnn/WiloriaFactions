@@ -1,0 +1,7 @@
+name: WiloriaFactions
+version: '1.0.0-VERSION'
+main: fr.kirosnn.wiloriaFactions.WiloriaFactions
+api-version: '1.20'
+commands:
+  f:
+    description: Commande du plugin.
