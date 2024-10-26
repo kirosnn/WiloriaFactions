@@ -1,9 +1,10 @@
 package fr.kirosnn.wiloriaFactions;
 
+import fr.kirosnn.wiloriaFactions.cdf.ItemsListener;
 import fr.kirosnn.wiloriaFactions.cmd.FactionsCommand;
 import fr.kirosnn.wiloriaFactions.cmd.tabcompleter.FactionTabCompleter;
 import fr.kirosnn.wiloriaFactions.data.Factions;
-import fr.kirosnn.wiloriaFactions.listeners.ClaimEnterListener;
+import fr.kirosnn.wiloriaFactions.listeners.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class WiloriaFactions extends JavaPlugin {
@@ -21,6 +22,10 @@ public final class WiloriaFactions extends JavaPlugin {
         getCommand("f").setTabCompleter(new FactionTabCompleter());
 
         getServer().getPluginManager().registerEvents(new ClaimEnterListener(this), this);
+        getServer().getPluginManager().registerEvents(new FactionChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new ItemsListener(factions), this);
+        getServer().getPluginManager().registerEvents(new FactionProtectionListener(this), this);
+        getServer().getPluginManager().registerEvents(new FactionFriendlyFireListener(this), this);
     }
 
     @Override

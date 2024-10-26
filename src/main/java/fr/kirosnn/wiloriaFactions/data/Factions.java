@@ -2,64 +2,79 @@ package fr.kirosnn.wiloriaFactions.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fr.kirosnn.wiloriaFactions.Role;
 import fr.kirosnn.wiloriaFactions.WiloriaFactions;
 import fr.kirosnn.wiloriaFactions.claims.FLocation;
 import org.bukkit.entity.Player;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Collection;
+import java.util.*;
 
 public class Factions {
-    private final Map<String, Faction> factions = new HashMap<>();
-    private final File file = new File(WiloriaFactions.getInstance().getDataFolder(), "data/dataFactions.json");
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final Map<String, Faction> factions = new HashMap<>(); // Stocke les factions par ID
+    private final Map<String, List<UUID>> factionInvitations = new HashMap<>(); // Invitations pour rejoindre les factions
+    private final File file = new File(WiloriaFactions.getInstance().getDataFolder(), "data/dataFactions.json"); // Fichier JSON
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create(); // GSON pour JSON
 
-
+    // Chargement des données des factions depuis le fichier JSON
     public void load() {
         if (!file.exists()) {
-            file.getParentFile().mkdirs();
+            file.getParentFile().mkdirs(); // Création des dossiers si nécessaire
             return;
         }
 
         try (Reader reader = new FileReader(file)) {
-            FactionData data = gson.fromJson(reader, FactionData.class);
+            FactionData[] data = gson.fromJson(reader, FactionData[].class);
             if (data != null) {
-                this.factions.putAll(data.factions);
+                for (FactionData factionData : data) {
+                    // Création d'une nouvelle instance Faction à partir des données JSON
+                    Faction faction = new Faction(factionData.name, factionData.leader);
+                    faction.setDescription(factionData.description);
+                    faction.setClaims(factionData.claims);
+
+                    // Ajout des membres avec leurs rôles respectifs
+                    for (Map.Entry<String, String> entry : factionData.members.entrySet()) {
+                        UUID memberUUID = UUID.fromString(entry.getKey());
+                        Role role = Role.valueOf(entry.getValue());
+                        faction.addMemberWithRole(memberUUID, role);
+                    }
+
+                    factions.put(faction.getId(), faction); // Ajoute la faction dans la map
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Sauvegarde forcée de l'état des factions dans le fichier JSON
     public void forceSave() {
+        List<FactionData> data = new ArrayList<>();
+        for (Faction faction : factions.values()) {
+            data.add(new FactionData(faction));
+        }
+
         try (Writer writer = new FileWriter(file)) {
-            FactionData data = new FactionData(factions);
             gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Création d'une nouvelle faction
     public boolean createFaction(String name, Player player) {
-        if (name.length() < 4 || name.length() > 9) {
-            return false;
-        }
-        if (!name.matches("[a-zA-Z0-9]+")) {
-            return false;
-        }
-        if (getFactionByName(name) != null) {
+        // Validation du nom de la faction
+        if (name.length() < 4 || name.length() > 9 || !name.matches("[a-zA-Z0-9]+") || getFactionByName(name) != null) {
             return false;
         }
 
-        Faction faction = new Faction(name, player.getUniqueId());
-        factions.put(faction.getId(), faction);
-        forceSave();
+        Faction faction = new Faction(name, player.getUniqueId()); // Crée une nouvelle instance Faction
+        factions.put(faction.getId(), faction); // Ajoute dans la map
+        forceSave(); // Sauvegarde des données
         return true;
     }
 
+    // Récupère une faction par son nom
     public Faction getFactionByName(String name) {
         return factions.values().stream()
                 .filter(f -> f.getName().equalsIgnoreCase(name))
@@ -67,6 +82,7 @@ public class Factions {
                 .orElse(null);
     }
 
+    // Récupère une faction par l'UUID du joueur
     public Faction getFactionByPlayer(UUID playerUUID) {
         return factions.values().stream()
                 .filter(f -> f.getMembers().contains(playerUUID))
@@ -74,27 +90,76 @@ public class Factions {
                 .orElse(null);
     }
 
+    // Récupère toutes les factions
     public Collection<Faction> getAllFactions() {
         return factions.values();
     }
 
+    // Définition d'une classe statique FactionData pour la sérialisation
     private static class FactionData {
-        private final Map<String, Faction> factions;
+        private String id;
+        private String name;
+        private String description;
+        private UUID leader;
+        private Map<String, String> members; // UUID et rôle sous forme de chaîne
+        private Set<FLocation> claims;
 
-        public FactionData(Map<String, Faction> factions) {
-            this.factions = factions;
+        // Constructeur pour sérialiser les données de la faction
+        public FactionData(Faction faction) {
+            this.id = faction.getId();
+            this.name = faction.getName();
+            this.description = faction.getDescription();
+            this.leader = faction.getLeader();
+            this.claims = faction.getClaims();
+            this.members = new HashMap<>();
+
+            for (UUID memberUUID : faction.getMembers()) {
+                Role role = faction.getRole(memberUUID);
+                members.put(memberUUID.toString(), role.name()); // UUID et rôle en tant que chaîne
+            }
         }
     }
 
+    // Vérifie si un chunk est déjà revendiqué
     public boolean isChunkClaimed(FLocation loc) {
         return factions.values().stream()
                 .anyMatch(faction -> faction.hasClaim(loc));
     }
 
+    // Récupère une faction à partir de la position d'un chunk
     public Faction getFactionByLocation(FLocation location) {
         return factions.values().stream()
                 .filter(faction -> faction.hasClaim(location))
                 .findFirst()
                 .orElse(null);
+    }
+
+    // Ajoute une invitation pour un joueur à rejoindre une faction
+    public void addInvitation(String factionName, UUID playerUUID) {
+        factionInvitations.computeIfAbsent(factionName, k -> new ArrayList<>()).add(playerUUID);
+    }
+
+    // Vérifie si un joueur est invité dans une faction
+    public boolean isPlayerInvited(String factionName, UUID playerUUID) {
+        return factionInvitations.getOrDefault(factionName, Collections.emptyList()).contains(playerUUID);
+    }
+
+    // Retire une invitation pour un joueur
+    public void removeInvitation(String factionName, UUID playerUUID) {
+        List<UUID> invitations = factionInvitations.get(factionName);
+        if (invitations != null) {
+            invitations.remove(playerUUID);
+            if (invitations.isEmpty()) {
+                factionInvitations.remove(factionName);
+            }
+        }
+    }
+
+    // Ajoute un joueur à une faction avec le rôle par défaut (RECRUIT)
+    public void addPlayerToFaction(UUID playerUUID, Faction faction) {
+        if (faction != null) {
+            faction.addMemberWithRole(playerUUID, Role.RECRUIT);
+            forceSave(); // Sauvegarde après ajout du membre
+        }
     }
 }

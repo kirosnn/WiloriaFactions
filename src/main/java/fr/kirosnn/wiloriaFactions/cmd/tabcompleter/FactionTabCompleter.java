@@ -33,7 +33,8 @@ public class FactionTabCompleter implements TabCompleter {
             "home",
             "map",
             "leave",
-            "help"
+            "help",
+            "join"
     );
 
     @Override

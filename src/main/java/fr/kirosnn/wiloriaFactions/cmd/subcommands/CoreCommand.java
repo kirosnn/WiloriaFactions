@@ -21,6 +21,7 @@ public class CoreCommand {
 
     public void execute(Player player) {
         Faction faction = plugin.getFactions().getFactionByPlayer(player.getUniqueId());
+
         if (faction == null) {
             player.sendMessage("§cVous n'êtes pas dans une faction !");
             return;
@@ -38,8 +39,11 @@ public class CoreCommand {
 
         ItemStack factionHeart = items.createFactionHeartItem();
         player.getInventory().addItem(factionHeart);
+
         faction.setHasReceivedCore(true);
+
         plugin.getFactions().forceSave();
+
         player.sendMessage("§aVous avez reçu le Coeur de Faction !");
     }
 }

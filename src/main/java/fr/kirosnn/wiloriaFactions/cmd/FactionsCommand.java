@@ -21,6 +21,10 @@ public class FactionsCommand implements CommandExecutor {
     private final UnclaimCommand unclaimCommand;
     private final UnclaimAllCommand unclaimAllCommand;
     private final MapCommand mapCommand;
+    private final InviteCommand inviteCommand;
+    private final JoinCommand joinCommand;
+    private final PromoteCommand promoteCommand;
+    private  final DemoteCommand demoteCommand;
 
     public FactionsCommand(WiloriaFactions plugin) {
         this.createFactionCommand = new CreateFactionCommand(plugin.getFactions());
@@ -31,6 +35,10 @@ public class FactionsCommand implements CommandExecutor {
         this.unclaimCommand = new UnclaimCommand(plugin);
         this.unclaimAllCommand = new UnclaimAllCommand(plugin);
         this.mapCommand = new MapCommand(plugin.getFactions());
+        this.joinCommand = new JoinCommand(plugin);
+        this.inviteCommand = new InviteCommand(plugin);
+        this.promoteCommand = new PromoteCommand();
+        this.demoteCommand = new DemoteCommand();
     }
 
     @Override
@@ -69,6 +77,18 @@ public class FactionsCommand implements CommandExecutor {
                 break;
             case "map":
                 mapCommand.execute(player);
+                break;
+            case "invite":
+                inviteCommand.execute(player, args);
+                break;
+            case "join":
+                joinCommand.execute(player, args);
+                break;
+            case "promote":
+                promoteCommand.execute(player, args);
+                break;
+            case "demote":
+                demoteCommand.execute(player, args);
                 break;
             default:
                 player.sendMessage("§cCommande inconnue. Tapez /f pour voir les commandes disponibles.");
