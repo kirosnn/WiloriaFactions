@@ -24,7 +24,11 @@ public class FactionsCommand implements CommandExecutor {
     private final InviteCommand inviteCommand;
     private final JoinCommand joinCommand;
     private final PromoteCommand promoteCommand;
-    private  final DemoteCommand demoteCommand;
+    private final DemoteCommand demoteCommand;
+    private final SetHomeCommand setHomeCommand;
+    private final HomeCommand homeCommand;
+    private final PermsCommand permsCommand;
+
 
     public FactionsCommand(WiloriaFactions plugin) {
         this.createFactionCommand = new CreateFactionCommand(plugin.getFactions());
@@ -39,6 +43,9 @@ public class FactionsCommand implements CommandExecutor {
         this.inviteCommand = new InviteCommand(plugin);
         this.promoteCommand = new PromoteCommand();
         this.demoteCommand = new DemoteCommand();
+        this.setHomeCommand = new SetHomeCommand();
+        this.homeCommand = new HomeCommand();
+        this.permsCommand = new PermsCommand(plugin.getFactions());
     }
 
     @Override
@@ -90,9 +97,17 @@ public class FactionsCommand implements CommandExecutor {
             case "demote":
                 demoteCommand.execute(player, args);
                 break;
+            case "sethome":
+                setHomeCommand.execute(player, args);
+                break;
+            case "home":
+                homeCommand.execute(player, args);
+                break;
+            case "perms":
+                permsCommand.execute(player);
+                break;
             default:
                 player.sendMessage("§cCommande inconnue. Tapez /f pour voir les commandes disponibles.");
-                helpCommand.execute(player, new String[]{"help", "1"});
                 break;
         }
         return true;

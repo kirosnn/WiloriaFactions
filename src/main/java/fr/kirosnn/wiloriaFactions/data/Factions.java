@@ -47,7 +47,6 @@ public class Factions {
         }
     }
 
-    // Sauvegarde forcée de l'état des factions dans le fichier JSON
     public void forceSave() {
         List<FactionData> data = new ArrayList<>();
         for (Faction faction : factions.values()) {
@@ -61,20 +60,17 @@ public class Factions {
         }
     }
 
-    // Création d'une nouvelle faction
     public boolean createFaction(String name, Player player) {
-        // Validation du nom de la faction
         if (name.length() < 4 || name.length() > 9 || !name.matches("[a-zA-Z0-9]+") || getFactionByName(name) != null) {
             return false;
         }
 
-        Faction faction = new Faction(name, player.getUniqueId()); // Crée une nouvelle instance Faction
-        factions.put(faction.getId(), faction); // Ajoute dans la map
-        forceSave(); // Sauvegarde des données
+        Faction faction = new Faction(name, player.getUniqueId());
+        factions.put(faction.getId(), faction);
+        forceSave();
         return true;
     }
 
-    // Récupère une faction par son nom
     public Faction getFactionByName(String name) {
         return factions.values().stream()
                 .filter(f -> f.getName().equalsIgnoreCase(name))
@@ -82,7 +78,6 @@ public class Factions {
                 .orElse(null);
     }
 
-    // Récupère une faction par l'UUID du joueur
     public Faction getFactionByPlayer(UUID playerUUID) {
         return factions.values().stream()
                 .filter(f -> f.getMembers().contains(playerUUID))
@@ -90,21 +85,18 @@ public class Factions {
                 .orElse(null);
     }
 
-    // Récupère toutes les factions
     public Collection<Faction> getAllFactions() {
         return factions.values();
     }
 
-    // Définition d'une classe statique FactionData pour la sérialisation
     private static class FactionData {
         private String id;
         private String name;
         private String description;
         private UUID leader;
-        private Map<String, String> members; // UUID et rôle sous forme de chaîne
+        private Map<String, String> members;
         private Set<FLocation> claims;
 
-        // Constructeur pour sérialiser les données de la faction
         public FactionData(Faction faction) {
             this.id = faction.getId();
             this.name = faction.getName();
@@ -115,18 +107,16 @@ public class Factions {
 
             for (UUID memberUUID : faction.getMembers()) {
                 Role role = faction.getRole(memberUUID);
-                members.put(memberUUID.toString(), role.name()); // UUID et rôle en tant que chaîne
+                members.put(memberUUID.toString(), role.name());
             }
         }
     }
 
-    // Vérifie si un chunk est déjà revendiqué
     public boolean isChunkClaimed(FLocation loc) {
         return factions.values().stream()
                 .anyMatch(faction -> faction.hasClaim(loc));
     }
 
-    // Récupère une faction à partir de la position d'un chunk
     public Faction getFactionByLocation(FLocation location) {
         return factions.values().stream()
                 .filter(faction -> faction.hasClaim(location))
@@ -134,17 +124,14 @@ public class Factions {
                 .orElse(null);
     }
 
-    // Ajoute une invitation pour un joueur à rejoindre une faction
     public void addInvitation(String factionName, UUID playerUUID) {
         factionInvitations.computeIfAbsent(factionName, k -> new ArrayList<>()).add(playerUUID);
     }
 
-    // Vérifie si un joueur est invité dans une faction
     public boolean isPlayerInvited(String factionName, UUID playerUUID) {
         return factionInvitations.getOrDefault(factionName, Collections.emptyList()).contains(playerUUID);
     }
 
-    // Retire une invitation pour un joueur
     public void removeInvitation(String factionName, UUID playerUUID) {
         List<UUID> invitations = factionInvitations.get(factionName);
         if (invitations != null) {
@@ -155,11 +142,10 @@ public class Factions {
         }
     }
 
-    // Ajoute un joueur à une faction avec le rôle par défaut (RECRUIT)
     public void addPlayerToFaction(UUID playerUUID, Faction faction) {
         if (faction != null) {
             faction.addMemberWithRole(playerUUID, Role.RECRUIT);
-            forceSave(); // Sauvegarde après ajout du membre
+            forceSave();
         }
     }
 }

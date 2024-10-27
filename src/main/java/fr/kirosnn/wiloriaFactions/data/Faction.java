@@ -3,6 +3,7 @@ package fr.kirosnn.wiloriaFactions.data;
 import fr.kirosnn.wiloriaFactions.Role;
 import fr.kirosnn.wiloriaFactions.claims.FLocation;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -12,12 +13,13 @@ public class Faction {
     private String name;
     private String description;
     private UUID leader;
-    private Map<UUID, Role> members; // Change List<UUID> to Map for storing roles
+    private Map<UUID, Role> members;
     private FLocation firstClaim;
     private Set<FLocation> claims;
     private boolean pendingFirstClaimUnclaim;
     private boolean hasReceivedCore;
     private static final int MAX_MEMBERS = 12;
+    private Location home;
 
     public Faction(String name, UUID leader) {
         this.id = UUID.randomUUID().toString();
@@ -25,7 +27,7 @@ public class Faction {
         this.description = "Description par défaut.";
         this.leader = leader;
         this.members = new HashMap<>();
-        this.members.put(leader, Role.LEADER); // Set leader with LEADER role
+        this.members.put(leader, Role.LEADER);
         this.claims = new HashSet<>();
         this.pendingFirstClaimUnclaim = false;
         this.hasReceivedCore = false;
@@ -203,5 +205,17 @@ public class Faction {
     public boolean canPromote(UUID playerUUID) {
         Role role = members.get(playerUUID);
         return role == Role.LEADER || role == Role.COLEADER;
+    }
+
+    public Location getHome() {
+        return home;
+    }
+
+    public void setHome(Location home) {
+        this.home = home;
+    }
+
+    public boolean hasHome() {
+        return home != null;
     }
 }

@@ -1,7 +1,3 @@
-/*
-MapCommand.java [EN COURS]
- */
-
 package fr.kirosnn.wiloriaFactions.cmd.subcommands;
 
 import fr.kirosnn.wiloriaFactions.claims.FLocation;
@@ -28,7 +24,7 @@ public class MapCommand {
 
         String claimOwner = (currentFaction != null) ? currentFaction.getName() : "§aTerre non conquise";
         int headerWidth = 24;
-        int remainingWidth = headerWidth - claimOwner.length() - 8;
+        int remainingWidth = Math.max(0, headerWidth - claimOwner.length() - 8);
         int sideWidth = remainingWidth / 2;
 
         StringBuilder headerText = new StringBuilder(ChatColor.YELLOW.toString());

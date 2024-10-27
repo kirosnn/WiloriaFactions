@@ -2,6 +2,7 @@ package fr.kirosnn.wiloriaFactions;
 
 import fr.kirosnn.wiloriaFactions.cdf.ItemsListener;
 import fr.kirosnn.wiloriaFactions.cmd.FactionsCommand;
+import fr.kirosnn.wiloriaFactions.cmd.subcommands.PermsCommand;
 import fr.kirosnn.wiloriaFactions.cmd.tabcompleter.FactionTabCompleter;
 import fr.kirosnn.wiloriaFactions.data.Factions;
 import fr.kirosnn.wiloriaFactions.listeners.*;
@@ -17,6 +18,7 @@ public final class WiloriaFactions extends JavaPlugin {
         instance = this;
         this.factions = new Factions();
         this.factions.load();
+        PermsCommand permsCommand = new PermsCommand(factions);
 
         getCommand("f").setExecutor(new FactionsCommand(this));
         getCommand("f").setTabCompleter(new FactionTabCompleter());
@@ -26,6 +28,7 @@ public final class WiloriaFactions extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsListener(factions), this);
         getServer().getPluginManager().registerEvents(new FactionProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new FactionFriendlyFireListener(this), this);
+        getServer().getPluginManager().registerEvents(permsCommand, this);
     }
 
     @Override
